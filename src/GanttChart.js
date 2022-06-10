@@ -6,6 +6,7 @@ import am5themes_Animated from '@amcharts/amcharts5/themes/Animated';
 // [Gantt] Gantt demo: https://www.amcharts.com/demos/gantt-chart/
 // [TODO] Legend: https://www.amcharts.com/docs/v4/tutorials/highlighting-column-series-on-legend-click/
 // [TODO] Custom theme: https://www.amcharts.com/docs/v5/concepts/themes/creating-themes/
+// [TODO] Rollup
 
 class GanttChart extends React.Component {
     constructor(props) {
@@ -13,8 +14,14 @@ class GanttChart extends React.Component {
         this.root = null;
         this.chart = null;
         this.series = null;
+        this.xAxis = null;
+        this.yAxis = null;
+        this.originalColumns = null;
         this.selectedColumn = null;
+        this.previousColumns = null;
         this.handleColumnClick = this.handleColumnClick.bind(this);
+        this.hideColumn = this.hideColumn.bind(this);
+        this.showColumn = this.showColumn.bind(this);
     }
     // All chart creation should take place here
     componentDidMount() {
@@ -145,13 +152,15 @@ class GanttChart extends React.Component {
             })
         );
 
-        yAxis.data.setAll([
+        this.originalColumns = [
             { category: "John" },
             { category: "Jane" },
             { category: "Peter" },
             { category: "Melania" },
             { category: "Donald" }
-        ]);
+        ]
+
+        yAxis.data.setAll(this.originalColumns);
 
         let xAxis = chart.xAxes.push(
             am5xy.DateAxis.new(root, {
@@ -193,6 +202,8 @@ class GanttChart extends React.Component {
         }));
 
         // Set objects
+        this.xAxis = xAxis;
+        this.yAxis = yAxis;
         this.series = series;
         this.chart = chart;
         this.root = root;
@@ -201,8 +212,13 @@ class GanttChart extends React.Component {
     render() {
         return(
             <>
+            <button type="button" onClick={() => this.hideColumn()}>Hide Column</button>
+            <button type="button" onClick={() => this.showColumn()}>Show Column</button>
             {/* Render the chart itself inside a div. id should match whatever we passed to Root.new() */}
             <div id="chartdiv" style={{width: "100%", height: "500px"}}></div>
+            <div style={{width: "100%", height: '200px'}}>
+            
+            </div>
             </>
         );
     }
@@ -229,6 +245,22 @@ class GanttChart extends React.Component {
         });
 
         this.selectedColumn = ev.target;
+    }
+
+    // Hide the bottom column
+    hideColumn() {
+        console.log(this.chart.yAxes.values[0].data.values);
+        this.previousColumns = this.chart.yAxes.values[0].data.values;
+        let newColumns = [...this.previousColumns];
+        newColumns.pop();
+        this.yAxis.data.setAll(newColumns);
+    }
+
+    // Show the last deleted column
+    showColumn() {
+        let newColumns = this.originalColumns.slice(0, this.chart.yAxes.values[0].data.values.length + 1);
+        console.log(newColumns);
+        this.yAxis.data.setAll(newColumns);
     }
 
     // Make sure to dispose of chart when we're done!
