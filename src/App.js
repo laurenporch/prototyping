@@ -1,5 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
+import * as am5 from '@amcharts/amcharts5';
 
 function App() {
   return (
