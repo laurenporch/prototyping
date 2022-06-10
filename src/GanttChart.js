@@ -6,7 +6,7 @@ import am5themes_Animated from '@amcharts/amcharts5/themes/Animated';
 // [Gantt] Gantt demo: https://www.amcharts.com/demos/gantt-chart/
 // [TODO] Legend: https://www.amcharts.com/docs/v4/tutorials/highlighting-column-series-on-legend-click/
 // [TODO] Custom theme: https://www.amcharts.com/docs/v5/concepts/themes/creating-themes/
-// [TODO] Rollup
+// [TODO] Rollup (can probably be done with show/hide functionality for rows, maybe attached to arrow button on row title)
 
 class GanttChart extends React.Component {
     constructor(props) {
@@ -225,10 +225,8 @@ class GanttChart extends React.Component {
 
     // Set border stroke on click
     handleColumnClick(ev) {
-        // Get column data
-        // console.log(ev.target.dataItem.dataContext.category, new Date(ev.target.dataItem.dataContext.fromDate), new Date(ev.target.dataItem.dataContext.toDate));
-        // Get all columns on chart
-        // console.log(this.series.columns.values);
+        // Get column name, formatted fromDate, and formatted toDate --> ev.target.dataItem.dataContext.category, new Date(ev.target.dataItem.dataContext.fromDate), new Date(ev.target.dataItem.dataContext.toDate)
+        // Get all columns on chart --> this.series.columns.values
 
         if (this.selectedColumn !== null && this.selectedColumn !== ev)
         {
@@ -249,7 +247,6 @@ class GanttChart extends React.Component {
 
     // Hide the bottom column
     hideColumn() {
-        console.log(this.chart.yAxes.values[0].data.values);
         this.previousColumns = this.chart.yAxes.values[0].data.values;
         let newColumns = [...this.previousColumns];
         newColumns.pop();
@@ -259,7 +256,6 @@ class GanttChart extends React.Component {
     // Show the last deleted column
     showColumn() {
         let newColumns = this.originalColumns.slice(0, this.chart.yAxes.values[0].data.values.length + 1);
-        console.log(newColumns);
         this.yAxis.data.setAll(newColumns);
     }
 
