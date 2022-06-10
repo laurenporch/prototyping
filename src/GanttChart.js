@@ -10,8 +10,10 @@ import am5themes_Animated from '@amcharts/amcharts5/themes/Animated';
 class GanttChart extends React.Component {
     constructor(props) {
         super(props);
-        this.chart = null;
         this.root = null;
+        this.chart = null;
+        this.series = null;
+        this.selectedColumn = null;
         this.handleColumnClick = this.handleColumnClick.bind(this);
     }
     // All chart creation should take place here
@@ -191,6 +193,7 @@ class GanttChart extends React.Component {
         }));
 
         // Set objects
+        this.series = series;
         this.chart = chart;
         this.root = root;
     }
@@ -206,12 +209,26 @@ class GanttChart extends React.Component {
 
     // Set border stroke on click
     handleColumnClick(ev) {
+        // Get column data
         // console.log(ev.target.dataItem.dataContext.category, new Date(ev.target.dataItem.dataContext.fromDate), new Date(ev.target.dataItem.dataContext.toDate));
+        // Get all columns on chart
+        // console.log(this.series.columns.values);
+
+        if (this.selectedColumn !== null && this.selectedColumn !== ev)
+        {
+            // Reset last selection
+            this.selectedColumn.setAll({
+                strokeOpacity: 0
+            })
+        }
+        // Set border on current selection
         ev.target.setAll({
             strokeOpacity: 1,
             stroke: am5.color("#000000"),
             strokeWidth: 3
         });
+
+        this.selectedColumn = ev.target;
     }
 
     // Make sure to dispose of chart when we're done!
