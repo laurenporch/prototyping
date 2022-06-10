@@ -1,8 +1,9 @@
 import React from 'react';
 import * as am5 from '@amcharts/amcharts5';
 import * as am5xy from '@amcharts/amcharts5/xy';
-// import * as am5percent from '@amcharts/amcharts5/percent';
 import am5themes_Animated from '@amcharts/amcharts5/themes/Animated';
+
+// [Gantt] Gantt demo: https://www.amcharts.com/demos/gantt-chart/
 
 class GanttChart extends React.Component {
     // All chart creation should take place here
@@ -12,7 +13,7 @@ class GanttChart extends React.Component {
 
         // [Gantt] Set date format
         root.dateFormatter.setAll({
-            dateFormat: "yyyy-MM-dd",
+            dateFormat: "yyyy-MM-dd HH:mm",
             dateFields: ["valueX", "openValueX"]
         });
 
@@ -144,7 +145,7 @@ class GanttChart extends React.Component {
 
         let xAxis = chart.xAxes.push(
             am5xy.DateAxis.new(root, {
-                baseInterval: { timeUnit: "minute", count: 1 }, // SETS THE LOWEST TIME UNIT AVAILABLE
+                baseInterval: { timeUnit: "millisecond", count: 1 }, // Sets the LOWEST time unit available
                 renderer: am5xy.AxisRendererX.new(root, {})
             })
         );
@@ -153,7 +154,7 @@ class GanttChart extends React.Component {
         let series = chart.series.push(am5xy.ColumnSeries.new(root, {
             xAxis: xAxis,
             yAxis: yAxis,
-            openValueXField: "fromDate",    // THIS IS WHAT MAKES IT A HORIZONTAL "BAR" (GANTT) CHART ??
+            openValueXField: "fromDate",    // THIS IS WHAT MAKES IT A HORIZONTAL "BAR" (GANTT) CHART ???
             valueXField: "toDate",
             categoryYField: "category",
             sequencedInterpolation: true
@@ -162,7 +163,7 @@ class GanttChart extends React.Component {
         series.columns.template.setAll({
             templateField: "columnSettings",
             strokeOpacity: 0,
-            tooltipText: "{category}: {openValueX.formateDate('yyyy-MM-dd HH:mm')} - {valueX.formatDate('yyyy-MM-dd HH:mm')}"
+            tooltipText: "{category}: {openValueX} - {valueX}"
         });
 
         series.data.processor = am5.DataProcessor.new(root, {
@@ -178,13 +179,6 @@ class GanttChart extends React.Component {
             orientation: "horizontal"
         }));
 
-        // [Gantt] Add legend
-        // let legend = chart.children.push(am5.Legend.new(root, {
-        //     centerX: am5.p50,   // am5.p50 = percent 50
-        //     x: am5.p50
-        // }));
-        // legend.data.setAll(chart.series.values);
-        
         // Set objects
         this.chart = chart;
         this.root = root;
@@ -199,7 +193,7 @@ class GanttChart extends React.Component {
         );
     }
 
-    // All chart updates need to be checked and updated here
+    // All chart updates need to be checked and updated here ??
     // componentDidUpdate() {
 
     // }
