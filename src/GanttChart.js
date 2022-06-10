@@ -4,8 +4,16 @@ import * as am5xy from '@amcharts/amcharts5/xy';
 import am5themes_Animated from '@amcharts/amcharts5/themes/Animated';
 
 // [Gantt] Gantt demo: https://www.amcharts.com/demos/gantt-chart/
+// [TODO] Legend: https://www.amcharts.com/docs/v4/tutorials/highlighting-column-series-on-legend-click/
+// [TODO] Custom theme: https://www.amcharts.com/docs/v5/concepts/themes/creating-themes/
 
 class GanttChart extends React.Component {
+    constructor(props) {
+        super(props);
+        this.chart = null;
+        this.root = null;
+        this.handleColumnClick = this.handleColumnClick.bind(this);
+    }
     // All chart creation should take place here
     componentDidMount() {
         // Create root element
@@ -166,6 +174,9 @@ class GanttChart extends React.Component {
             tooltipText: "{category}: {openValueX} - {valueX}"
         });
 
+        // [Gantt] Add onClick event for "column" (bar)
+        series.columns.template.events.on("click", this.handleColumnClick);
+
         series.data.processor = am5.DataProcessor.new(root, {
             dateFields: ["fromDate", "toDate"],
             dateFormat: "yyyy-MM-dd HH:mm"
@@ -193,10 +204,15 @@ class GanttChart extends React.Component {
         );
     }
 
-    // All chart updates need to be checked and updated here ??
-    // componentDidUpdate() {
-
-    // }
+    // Set border stroke on click
+    handleColumnClick(ev) {
+        // console.log(ev.target.dataItem.dataContext.category, new Date(ev.target.dataItem.dataContext.fromDate), new Date(ev.target.dataItem.dataContext.toDate));
+        ev.target.setAll({
+            strokeOpacity: 1,
+            stroke: am5.color("#000000"),
+            strokeWidth: 3
+        });
+    }
 
     // Make sure to dispose of chart when we're done!
     componentWillUnmount() {
