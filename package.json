@@ -2,10 +2,20 @@
     "name": "typescript-prototype",
     "version": "1.0.0",
     "scripts": {
-        "build": "babel src -d lib"
+        "dev": "webpack serve",
+        "build": "webpack"
     },
     "dependencies": {
+        "@babel/preset-env": "^7.18.2",
+        "@babel/preset-react": "^7.17.12",
+        "@babel/preset-typescript": "^7.17.12",
+        "babel-loader": "^8.2.5",
         "react": "^17.0.1",
         "react-dom": "^17.0.1"
+    },
+    "devDependencies": {
+        "html-webpack-plugin": "^5.5.0",
+        "webpack-cli": "^4.10.0",
+        "webpack-dev-server": "^4.9.2"
     }
 }
