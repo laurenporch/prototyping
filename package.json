@@ -1,0 +1,11 @@
+{
+    "name": "typescript-prototype",
+    "version": "1.0.0",
+    "scripts": {
+        "build": "babel src -d lib"
+    },
+    "dependencies": {
+        "react": "^17.0.1",
+        "react-dom": "^17.0.1"
+    }
+}
