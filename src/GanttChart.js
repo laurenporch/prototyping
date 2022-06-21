@@ -28,12 +28,6 @@ class GanttChart extends React.Component {
         // Create root element
         let root = am5.Root.new("chartdiv");
 
-        // [Gantt] Set date format
-        root.dateFormatter.setAll({
-            dateFormat: "yyyy-MM-dd HH:mm",
-            dateFields: ["valueX", "openValueX"]
-        });
-
         // [Gantt] Set themes
         root.setThemes([
             am5themes_Animated.new(root)
@@ -41,9 +35,8 @@ class GanttChart extends React.Component {
 
         // [Gantt] Create chart
         let chart = root.container.children.push(am5xy.XYChart.new(root, {
-            panX: false,
-            panY: false,
-            wheelX: "panX",
+            panX: true,
+            panY: true,
             wheelY: "zoomX",
             layout: root.verticalLayout
         }));
@@ -56,24 +49,24 @@ class GanttChart extends React.Component {
             // John
             {
                 category: "John",
-                fromDate: "2018-01-01 08:00",
-                toDate: "2018-01-01 10:00",
+                fromTime: 8,
+                toTime: 10,
                 columnSettings: {
                     fill: am5.Color.brighten(colors.getIndex(0), 0)
                 }
             },
             {
                 category: "John",
-                fromDate: "2018-01-01 12:00",
-                toDate: "2018-01-01 15:00",
+                fromTime: 12,
+                toTime: 15,
                 columnSettings: {
                     fill: am5.Color.brighten(colors.getIndex(0), 0.4)
                 }
             },
             {
                 category: "John",
-                fromDate: "2018-01-01 15:30",
-                toDate: "2018-01-01 21:30",
+                fromTime: 15.5,
+                toTime: 21.5,
                 columnSettings: {
                     fill: am5.Color.brighten(colors.getIndex(0), 0.8)
                 }
@@ -81,16 +74,16 @@ class GanttChart extends React.Component {
             // Jane
             {
                 category: "Jane",
-                fromDate: "2018-01-01 09:00",
-                toDate: "2018-01-01 12:00",
+                fromTime: 9,
+                toTime: 12,
                 columnSettings: {
                     fill: am5.Color.brighten(colors.getIndex(2), 0)
                 }
             },
             {
                 category: "Jane",
-                fromDate: "2018-01-01 13:00",
-                toDate: "2018-01-01 17:00",
+                fromTime: 13,
+                toTime: 17,
                 columnSettings: {
                     fill: am5.Color.brighten(colors.getIndex(2), 0.4)
                 }
@@ -98,16 +91,16 @@ class GanttChart extends React.Component {
             // Peter
             {
                 category: "Peter",
-                fromDate: "2018-01-01 11:00",
-                toDate: "2018-01-01 16:00",
+                fromTime: 11,
+                toTime: 16,
                 columnSettings: {
                     fill: am5.Color.brighten(colors.getIndex(4), 0)
                 }
             },
             {
                 category: "Peter",
-                fromDate: "2018-01-01 16:00",
-                toDate: "2018-01-01 19:00",
+                fromTime: 16,
+                toTime: 19,
                 columnSettings: {
                     fill: am5.Color.brighten(colors.getIndex(4), 0.4)
                 }
@@ -115,16 +108,16 @@ class GanttChart extends React.Component {
             // Melania
             {
                 category: "Melania",
-                fromDate: "2018-01-01 16:00",
-                toDate: "2018-01-01 20:00",
+                fromTime: 16,
+                toTime: 20,
                 columnSettings: {
                     fill: am5.Color.brighten(colors.getIndex(6), 0)
                 }
             },
             {
                 category: "Melania",
-                fromDate: "2018-01-01 20:30",
-                toDate: "2018-01-02 00:00",
+                fromTime: 20.5,
+                toTime: 24,
                 columnSettings: {
                     fill: am5.Color.brighten(colors.getIndex(6), 0.4)
                 }
@@ -132,8 +125,8 @@ class GanttChart extends React.Component {
             // Donald
             {
                 category: "Donald",
-                fromDate: "2018-01-01 13:00",
-                toDate: "2018-01-02 00:00",
+                fromTime: 13,
+                toTime: 24,
                 columnSettings: {
                     fill: am5.Color.brighten(colors.getIndex(8), 0)
                 }
@@ -163,8 +156,7 @@ class GanttChart extends React.Component {
         yAxis.data.setAll(this.originalColumns);
 
         let xAxis = chart.xAxes.push(
-            am5xy.DateAxis.new(root, {
-                baseInterval: { timeUnit: "millisecond", count: 1 }, // Sets the LOWEST time unit available
+            am5xy.ValueAxis.new(root, {
                 renderer: am5xy.AxisRendererX.new(root, {})
             })
         );
@@ -173,8 +165,8 @@ class GanttChart extends React.Component {
         let series = chart.series.push(am5xy.ColumnSeries.new(root, {
             xAxis: xAxis,
             yAxis: yAxis,
-            openValueXField: "fromDate",    // THIS IS WHAT MAKES IT A HORIZONTAL "BAR" (GANTT) CHART ???
-            valueXField: "toDate",
+            openValueXField: "fromTime",    // THIS IS WHAT MAKES IT A HORIZONTAL "BAR" (GANTT) CHART ???
+            valueXField: "toTime",
             categoryYField: "category",
             sequencedInterpolation: true
         }));
@@ -187,11 +179,6 @@ class GanttChart extends React.Component {
 
         // [Gantt] Add onClick event for "column" (bar)
         series.columns.template.events.on("click", this.handleColumnClick);
-
-        series.data.processor = am5.DataProcessor.new(root, {
-            dateFields: ["fromDate", "toDate"],
-            dateFormat: "yyyy-MM-dd HH:mm"
-        });
 
         // [Gantt] Load the data to the chart
         series.data.setAll(data);
@@ -212,20 +199,17 @@ class GanttChart extends React.Component {
     render() {
         return(
             <>
-            <button type="button" onClick={() => this.hideColumn()}>Hide Column</button>
-            <button type="button" onClick={() => this.showColumn()}>Show Column</button>
-            {/* Render the chart itself inside a div. id should match whatever we passed to Root.new() */}
-            <div id="chartdiv" style={{width: "100%", height: "500px"}}></div>
-            <div style={{width: "100%", height: '200px'}}>
-            
-            </div>
+                <button type="button" onClick={() => this.hideColumn()}>Hide Column</button>
+                <button type="button" onClick={() => this.showColumn()}>Show Column</button>
+                {/* Render the chart itself inside a div. id should match whatever we passed to Root.new() */}
+                <div id="chartdiv" style={{width: "100%", height: "500px"}}></div>            
             </>
         );
     }
 
     // Set border stroke on click
     handleColumnClick(ev) {
-        // Get column name, formatted fromDate, and formatted toDate --> ev.target.dataItem.dataContext.category, new Date(ev.target.dataItem.dataContext.fromDate), new Date(ev.target.dataItem.dataContext.toDate)
+        // Get column name, formatted fromTime, and formatted toTime --> ev.target.dataItem.dataContext.category, new Date(ev.target.dataItem.dataContext.fromTime), new Date(ev.target.dataItem.dataContext.toTime)
         // Get all columns on chart --> this.series.columns.values
 
         if (this.selectedColumn !== null && this.selectedColumn !== ev)
