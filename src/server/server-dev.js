@@ -1,20 +1,34 @@
 const path = require('path');
 const express = require('express');
-
-// import path from 'path';
-// import express from 'express';
+const webpack = require('webpack');
+const webpackDevMiddleware = require('webpack-dev-middleware');
+const webpackHotMiddleware = require('webpack-hot-middleware');
+const config = require('../../webpack.dev.config.js');
 
 const app = express(),
             DIST_DIR = __dirname,
-            HTML_FILE = path.join(DIST_DIR, 'index.html');
+            HTML_FILE = path.join(DIST_DIR, 'index.html'),
+            compiler = webpack(config);
 
-app.use(express.static(DIST_DIR));
+app.use(webpackDevMiddleware(compiler, {
+    publicPath: config.output.publicPath
+}));
 
-app.get('*', (req, res) => {
-    res.sendFile(HTML_FILE)
+app.use(webpackHotMiddleware(compiler));
+
+app.get('*', (req, res, next) => {
+    compiler.outputFileSystem.readFile(HTML_FILE, (err, result) => {
+        if (err) {
+            return next(err);
+        }
+        res.set('content-type', 'text/html');
+        res.send(result);
+        res.end();
+    });
 });
 
 const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
     console.log(`App listening to ${PORT}....`);
     console.log('Press Ctrl+C to quit.');

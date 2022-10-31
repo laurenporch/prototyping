@@ -21,6 +21,17 @@ module.exports = {
                 loader: "babel-loader",
             },
             {
+                // Loads the javascript into html template provided.
+                // Entry point is set below in HtmlWebPackPlugin in Plugins.
+                test: /\.html$/,
+                use: [
+                    {
+                        loader: "html-loader",
+                        options: { minimize: true },
+                    },
+                ],
+            },
+            {
                 test: /\.css$/,
                 use: [ 'style-loader', 'css-loader' ],
             },
