@@ -1,8 +1,13 @@
-import logMessage from './js/logger';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import Message from './js/Message';
+
 import './css/style.css';
 
-// Log message to console
-logMessage('A very warm welcome to Expack!!!');
+ReactDOM.render(
+    <Message />,
+    document.getElementById('react-container')
+);
 
 // Needed for Hot Module Replacement
 if (typeof(module.hot) !== 'undefined') {
